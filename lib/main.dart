@@ -8,16 +8,16 @@ class Friend {
 }
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MessengerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MessengerApp extends StatelessWidget {
+  const MessengerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+      create: (context) => MessengerAppState(),
       child: MaterialApp(
         title: 'Simple Messenger',
         theme: ThemeData(
@@ -30,15 +30,46 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  
+class MessengerAppState extends ChangeNotifier {
+  var friends = <Friend>[];
+
+  void addFriend(name) {
+    if (friends.contains(name)) {
+      // Friend already exists
+      // code..
+    } else {
+      print('Added $name');
+      friends.add(Friend(name));
+    }
+
+    notifyListeners();
+  }
 }
 
-class FriendsPage extends StatelessWidget {
+class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
 
   @override
+  State<FriendsPage> createState() => _FriendsPageState();
+}
+
+class _FriendsPageState extends State<FriendsPage> {
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField
+  final controller = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MessengerAppState>();
+    var friends = appState.friends;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Friends List'),
@@ -46,50 +77,67 @@ class FriendsPage extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.add, size: 30),
-            onPressed: () { 
-              // Add friend functionality
-              // code...
-             },
-          )
+            onPressed: () => showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Add Friend'),
+                content: TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Name',
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'Cancel'),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Add friend
+                      appState.addFriend(controller.text);
+
+                      Navigator.pop(context, 'Add');
+                    },
+                    child: const Text('Add'),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
         automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-        child: ListView(
-          children: [
-            for (var i = 1; i <= 100; i++)
-              ListTile(
-                title: Text('Friend $i'),
-                trailing: const Icon(Icons.message),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MessagePage(friend: Friend('Name $i')),
-                    )
-                  );
-                }
-              )
-          ]
+        child: ListView.builder(
+          itemCount: friends.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(friends[index].name),
+              trailing: const Icon(Icons.message),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MessagePage(friend: friends[index]),
+                  ),
+                );
+              },
+            );
+          },
         ),
       )
     );
   }
 }
 
-// class MessagePage extends StatefulWidget {
-//   const MessagePage({super.key, required this.friend});
-
-//   final Friend friend;
-
-//   @override
-//   State<MessagePage> createState() => _MessagePageState();
-// }
-
 class MessagePage extends StatelessWidget {
+  // In the constructor, require a Friend
   const MessagePage({super.key, required this.friend});
 
+  // Declare a field that holds the Friend
   final Friend friend;
 
   @override
