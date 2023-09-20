@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 
 class Friend {
   final String name;
@@ -38,7 +39,6 @@ class MessengerAppState extends ChangeNotifier {
       // Friend already exists
       // code..
     } else {
-      print('Added $name');
       friends.add(Friend(name));
     }
 
@@ -95,7 +95,7 @@ class _FriendsPageState extends State<FriendsPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Add friend
+                      // Add friend to the friends list
                       appState.addFriend(controller.text);
 
                       Navigator.pop(context, 'Add');
@@ -118,9 +118,10 @@ class _FriendsPageState extends State<FriendsPage> {
               title: Text(friends[index].name),
               trailing: const Icon(Icons.message),
               onTap: () {
+                // Navigate to the Message page, passing in the selected friend
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => MessagePage(friend: friends[index]),
                   ),
                 );
@@ -152,10 +153,8 @@ class MessagePage extends StatelessWidget {
             return IconButton(
               icon: const Icon(Icons.arrow_back_ios),
               onPressed: () { 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FriendsPage()),
-                );
+                // Navigate back to Friends page
+                Navigator.pop(context);
               },
             );
           }
