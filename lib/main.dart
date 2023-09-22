@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'home.dart';
-import 'friend.dart';
+import 'pages/login_page.dart';
+import 'components/friend.dart';
 
 void main() {
   runApp(const MainApp());
@@ -21,7 +21,7 @@ class MainApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
-        home: const HomePage(),
+        home: const LoginPage(),
       ),
     );
   }

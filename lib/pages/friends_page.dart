@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'main.dart';
-import 'message.dart';
+import '../main.dart';
+import 'message_page.dart';
+
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
