@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'friend.dart';
+import '../components/friend.dart';
 
 class MessagePage extends StatelessWidget {
   // In the constructor, require a Friend
