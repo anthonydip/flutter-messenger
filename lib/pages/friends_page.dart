@@ -81,27 +81,28 @@ class _FriendsPageState extends State<FriendsPage> {
         ],
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-        child: ListView.builder(
-          itemCount: friends.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(friends[index].name),
-              trailing: const Icon(Icons.message),
-              onTap: () {
-                // Navigate to the Message page, passing in the selected friend
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => MessagePage(friend: friends[index]),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      )
+      body: Text("Logged in as: " + user.email!),
+      // body: Padding(
+      //   padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+      //   child: ListView.builder(
+      //     itemCount: friends.length,
+      //     itemBuilder: (BuildContext context, int index) {
+      //       return ListTile(
+      //         title: Text(friends[index].name),
+      //         trailing: const Icon(Icons.message),
+      //         onTap: () {
+      //           // Navigate to the Message page, passing in the selected friend
+      //           Navigator.push(
+      //             context,
+      //             CupertinoPageRoute(
+      //               builder: (context) => MessagePage(friend: friends[index]),
+      //             ),
+      //           );
+      //         },
+      //       );
+      //     },
+      //   ),
+      // )
     );
   }
 }
