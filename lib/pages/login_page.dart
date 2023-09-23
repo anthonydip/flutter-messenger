@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:simple_messenger/components/login_textfield.dart';
 import 'package:simple_messenger/components/login_button.dart';
+import 'package:simple_messenger/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onRegister;
@@ -138,9 +139,12 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Image.asset(
-                        'lib/assets/google.png',
-                        height: 54,
+                      child: GestureDetector(
+                        onTap: () => AuthService().signInWithGoogle(),
+                        child: Image.asset(
+                          'lib/assets/google.png',
+                          height: 54,
+                        ),
                       ),
                     ),
                   ],
