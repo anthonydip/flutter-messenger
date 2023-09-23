@@ -16,16 +16,12 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  bool isLoading = false;
 
   void signUp() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+    setState(() {
+      isLoading = true;
+    });
 
     try {
       // Check if password is confirmed
@@ -35,12 +31,16 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text
         );
       } else {
+        setState(() {
+          isLoading = false;
+        });
         alertErrorMesage('Passwords do not match');
       }
 
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      setState(() {
+        isLoading = false;
+      });
       alertErrorMesage(e.code);
     }
   }
@@ -113,6 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 LoginButton(
                   onTap: signUp,
                   text: 'Sign Up',
+                  isLoading: isLoading,
                 ),
           
                 const SizedBox(height: 50),
