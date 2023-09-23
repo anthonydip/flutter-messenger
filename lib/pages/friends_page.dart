@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,11 +19,18 @@ class _FriendsPageState extends State<FriendsPage> {
   // of the TextField
   final controller = TextEditingController();
 
+  // Get the current user
+  final user = FirebaseAuth.instance.currentUser!;
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed
     controller.dispose();
     super.dispose();
+  }
+
+  void signOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 
   @override
@@ -32,6 +40,10 @@ class _FriendsPageState extends State<FriendsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: signOut,
+        ),
         title: const Text('Friends List'),
         shadowColor: Theme.of(context).colorScheme.shadow,
         actions: <Widget>[
