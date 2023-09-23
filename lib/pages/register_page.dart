@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:simple_messenger/components/login_textfield.dart';
 import 'package:simple_messenger/components/login_button.dart';
 
-class LoginPage extends StatefulWidget {
-  final Function()? onRegister;
-  const LoginPage({super.key, required this.onRegister});
+class RegisterPage extends StatefulWidget {
+  final Function()? onSignIn;
+  const RegisterPage({super.key, required this.onSignIn});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  void signIn() async {
+  void signUp() async {
     showDialog(
       context: context,
       builder: (context) {
@@ -27,22 +28,20 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     try {
-       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text, 
-        password: passwordController.text
-      );
-
-      if (mounted) {
-        Navigator.pop(context);
+      // Check if password is confirmed
+      if (passwordController.text == confirmPasswordController.text) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text, 
+          password: passwordController.text
+        );
+      } else {
+        alertErrorMesage('Passwords do not match');
       }
+
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      
-      if(e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        alertErrorMesage('Invalid credentials');
-      } else {
-        alertErrorMesage('Error has occurred');
-      }
+      alertErrorMesage(e.code);
     }
   }
 
@@ -85,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
           
-                const SizedBox(height: 100),
+                const SizedBox(height: 50),
           
                 LoginTextField(
                   controller: emailController,
@@ -101,11 +100,19 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: true,
                 ),
           
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
+
+                LoginTextField(
+                  controller: confirmPasswordController,
+                  hintText: 'Confirm Password',
+                  obscureText: true,
+                ),
           
+                const SizedBox(height: 50),
+
                 LoginButton(
-                  onTap: signIn,
-                  text: 'Sign In',
+                  onTap: signUp,
+                  text: 'Sign Up',
                 ),
           
                 const SizedBox(height: 50),
@@ -157,14 +164,14 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Don\'t have an account?',
+                      'Already have an account?',
                       style: TextStyle(color: Colors.grey.shade700),
                     ),
                     const SizedBox(width: 4),
                     GestureDetector(
-                      onTap: widget.onRegister,
+                      onTap: widget.onSignIn,
                       child: const Text(
-                        'Register now',
+                        'Sign in',
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,

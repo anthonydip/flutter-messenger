@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "447245725870",
+    "project_id": "simple-messenger-53bdb",
+    "storage_bucket": "simple-messenger-53bdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447245725870:android:f7fdd2f8b97cc53c55fd3f",
+        "android_client_info": {
+          "package_name": "com.example.simple_messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyOpi3aZ3mYREDzMRxwqw0c7UO0l6epBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
