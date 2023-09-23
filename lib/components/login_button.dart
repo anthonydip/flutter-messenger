@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class LoginButton extends StatelessWidget {
   final Function()? onTap;
   final String text;
+  final bool isLoading;
 
   const LoginButton({
     super.key,
     required this.onTap,
     required this.text,
+    required this.isLoading,
   });
 
   @override
@@ -22,7 +24,8 @@ class LoginButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8)
         ),
         child: Center(
-          child: Text(
+          child: isLoading ? CircularProgressIndicator() :
+          Text(
             text,
             style: const TextStyle(
               color: Colors.white,
