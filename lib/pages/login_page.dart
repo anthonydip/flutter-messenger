@@ -15,29 +15,23 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isLoading = false;
 
   void signIn() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+    setState(() {
+      isLoading = true;
+    });
 
     try {
        await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text, 
         password: passwordController.text
       );
+    } on FirebaseAuthException catch (e) {      
+      setState(() {
+        isLoading = false;
+      });
 
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      
       if(e.code == 'INVALID_LOGIN_CREDENTIALS') {
         alertErrorMesage('Invalid credentials');
       } else {
@@ -106,6 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                 LoginButton(
                   onTap: signIn,
                   text: 'Sign In',
+                  isLoading: isLoading,
                 ),
           
                 const SizedBox(height: 50),
