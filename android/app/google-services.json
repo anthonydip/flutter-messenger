@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "***REMOVED***",
+    "project_id": "***REMOVED***",
+    "storage_bucket": "***REMOVED***.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:***REMOVED***:android:f7fdd2f8b97cc53c55fd3f",
+        "android_client_info": {
+          "package_name": "com.example.simple_messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "***REMOVED***"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
