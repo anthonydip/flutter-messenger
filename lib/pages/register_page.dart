@@ -159,9 +159,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Image.asset(
-                        'lib/assets/google.png',
-                        height: 54,
+                      child: GestureDetector(
+                        onTap: () => AuthService().signInWithGoogle(),
+                        child: Image.asset(
+                          'lib/assets/google.png',
+                          height: 54,
+                        ),
                       ),
                     ),
                   ],
