@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:simple_messenger/components/login_textfield.dart';
 import 'package:simple_messenger/components/login_button.dart';
+import 'package:simple_messenger/services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onSignIn;
@@ -26,6 +27,8 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       // Check if password is confirmed
       if (passwordController.text == confirmPasswordController.text) {
+        await AuthService().addUserToDatabase(emailController.text, passwordController.text, true);
+
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text, 
           password: passwordController.text
@@ -42,6 +45,11 @@ class _RegisterPageState extends State<RegisterPage> {
         isLoading = false;
       });
       alertErrorMesage(e.code);
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      alertErrorMesage(e.toString());
     }
   }
 
