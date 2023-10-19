@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:simple_messenger/models/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,8 +21,6 @@ class AuthService {
         'password': password
       }),
     );
-
-    print(jsonDecode(response.body));
 
     final body = jsonDecode(response.body);
     final status = body['status'];
@@ -53,6 +50,11 @@ class AuthService {
     );
 
     // Sign in
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+    final email = FirebaseAuth.instance.currentUser!.email;
+
+    await addUserToDatabase(email!, "", false);
+
+    return userCred;
   }
 }
