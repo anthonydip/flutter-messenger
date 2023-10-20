@@ -18,6 +18,21 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
   bool isLoading = false;
 
+  void googleSignIn() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await AuthService().signInWithGoogle();
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      alertErrorMesage(e.toString());
+    }
+  }
+
   void signIn() async {
     setState(() {
       isLoading = true;
@@ -140,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: GestureDetector(
-                        onTap: () => AuthService().signInWithGoogle(),
+                        onTap: googleSignIn,
                         child: Image.asset(
                           'lib/assets/google.png',
                           height: 54,
