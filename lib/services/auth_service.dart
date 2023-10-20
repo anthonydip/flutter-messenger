@@ -49,12 +49,16 @@ class AuthService {
       idToken: gAuth.idToken,
     );
 
-    // Sign in
-    final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
-    final email = FirebaseAuth.instance.currentUser!.email;
+    try {
+      // Add user to the Firestore database first
+      await addUserToDatabase(gUser.email, "", false);
 
-    await addUserToDatabase(email!, "", false);
+      // Sign in
+      final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
 
-    return userCred;
+      return userCred;
+    } catch (e) {
+      rethrow;
+    }
   }
 }
