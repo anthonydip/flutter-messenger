@@ -1,26 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:simple_messenger/singleton/user_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:simple_messenger/services/user_service.dart';
 
 class AuthService {
-
-  // Add the user to the database
-  Future<void> addUserToDatabase(String email, String password, bool isFlutter) async {
-    // Make a POST request to create a new user
+  // Get access token for the user
+  Future<String> getUserAccessToken(String email) async {
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/users'),
+      Uri.parse('${dotenv.env['API_URL']}/tokens/access'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer ${dotenv.env['INTERNAL_TOKEN']}'
       },
       body: jsonEncode(<String, String>{
         'email': email,
-        'provider': isFlutter ? 'Flutter' : 'Google',
-        'password': password
       }),
-    );
+    ).timeout(const Duration(seconds: 5));
 
     final body = jsonDecode(response.body);
     final status = body['status'];
@@ -28,11 +26,48 @@ class AuthService {
     switch (status) {
       case 'BAD REQUEST':
         throw 'Invalid request';
-      case 'CONFLICT':
-        throw 'User already exists';
       case 'INTERNAL SERVER ERROR':
         throw 'Internal server error';
     }
+
+    userData.token = body['token'];
+
+    return body['token'];
+  }
+
+  // Email and Password Sign In
+  signInWithEmail(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/auth/signin'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${dotenv.env['INTERNAL_TOKEN']}'
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'provider': 'Flutter',
+        'password': password
+      }),
+    ).timeout(const Duration(seconds: 5));
+
+    final body = jsonDecode(response.body);
+    final status = body['status'];
+
+    switch (status) {
+      case 'BAD REQUEST':
+        throw 'Invalid request';
+      case 'UNAUTHORIZED':
+        throw 'Incorrect password';
+      case 'INTERNAL SERVER ERROR':
+        throw 'Internal server error';
+    }
+
+    userData.token = body['token'];
+
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email, 
+      password: password
+    );
   }
 
   // Google Sign In
@@ -49,16 +84,20 @@ class AuthService {
       idToken: gAuth.idToken,
     );
 
-    try {
-      // Add user to the Firestore database first
-      await addUserToDatabase(gUser.email, "", false);
+    // Check if the user already exists in the database
+    final userExists = await UserService().getUserFromDatabase(gUser.email, false);
 
-      // Sign in
-      final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
-
-      return userCred;
-    } catch (e) {
-      rethrow;
+    // Add the user to the database if they do not already exist
+    if (!userExists) {
+      await UserService().addUserToDatabase(gUser.email, "", false);
     }
+
+    // Get user access token
+    await getUserAccessToken(gUser.email);
+
+    // Sign in
+    final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    return userCred;
   }
 }
