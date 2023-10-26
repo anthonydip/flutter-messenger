@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:simple_messenger/singleton/user_data.dart';
 
 import '../main.dart';
 import 'message_page.dart';
@@ -81,7 +82,7 @@ class _FriendsPageState extends State<FriendsPage> {
         ],
         automaticallyImplyLeading: false,
       ),
-      body: Text("Logged in as: " + user.email!),
+      body: Text("Logged in as: ${user.email}, token: ${userData.token}"),
       // body: Padding(
       //   padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
       //   child: ListView.builder(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:simple_messenger/components/login_textfield.dart';
 import 'package:simple_messenger/components/login_button.dart';
+import 'package:simple_messenger/components/alert.dart';
 import 'package:simple_messenger/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -29,7 +30,15 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLoading = false;
       });
-      alertErrorMesage(e.toString());
+      String message = "";
+      if (e.toString().contains("Timeout")) {
+        message = "Unable to connect to server";
+      }
+      else {
+        message = e.toString();
+      }
+      // ignore: use_build_context_synchronously
+      alertErrorMesage(message, context);
     }
   }
 
@@ -39,41 +48,34 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text, 
-        password: passwordController.text
-      );
+      await AuthService().signInWithEmail(emailController.text, passwordController.text);
     } on FirebaseAuthException catch (e) {      
       setState(() {
         isLoading = false;
       });
 
       if(e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        alertErrorMesage('Invalid credentials');
+        // ignore: use_build_context_synchronously
+        alertErrorMesage('Invalid credentials', context);
       } else {
-        alertErrorMesage('Error has occurred');
+        // ignore: use_build_context_synchronously
+        alertErrorMesage('Error has occurred', context);
       }
-    }
-  }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      String message = "";
+      if (e.toString().contains("Timeout")) {
+        message = "Unable to connect to server";
+      }
+      else {
+        message = e.toString();
+      }
 
-  void alertErrorMesage(String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, 'OK');
-              },
-              child: const Text('OK'),
-            ),
-          ]
-        );
-      },
-    );
+      // ignore: use_build_context_synchronously
+      alertErrorMesage(message, context);
+    }
   }
 
   @override
