@@ -34,16 +34,17 @@ class UserService {
     final status = body['status'];
 
     switch (status) {
+      case 'SUCCESS':
+        break;
       case 'BAD REQUEST':
         throw 'Invalid request';
       case 'NOT FOUND':
         userExists = false;
         break;
-      case 'INTERNAL SERVER ERROR':
+      default:
         throw 'Internal server error';
     }
 
-    print(body);
     return userExists;
   }
 
@@ -67,11 +68,13 @@ class UserService {
     final status = body['status'];
 
     switch (status) {
+      case 'CREATED':
+        break;
       case 'BAD REQUEST':
         throw 'Invalid request';
       case 'CONFLICT':
         throw 'User already exists';
-      case 'INTERNAL SERVER ERROR':
+      default:
         throw 'Internal server error';
     }
   }
