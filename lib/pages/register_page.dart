@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:simple_messenger/components/login_textfield.dart';
 import 'package:simple_messenger/components/login_button.dart';
+import 'package:simple_messenger/components/alert.dart';
 import 'package:simple_messenger/services/auth_service.dart';
+import 'package:simple_messenger/services/user_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onSignIn;
@@ -27,7 +29,8 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       // Check if password is confirmed
       if (passwordController.text == confirmPasswordController.text) {
-        await AuthService().addUserToDatabase(emailController.text, passwordController.text, true);
+        await UserService().addUserToDatabase(emailController.text, passwordController.text, true);
+        await AuthService().getUserAccessToken(emailController.text);
 
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text, 
@@ -37,40 +40,30 @@ class _RegisterPageState extends State<RegisterPage> {
         setState(() {
           isLoading = false;
         });
-        alertErrorMesage('Passwords do not match');
+        alertErrorMesage('Passwords do not match', context);
       }
 
     } on FirebaseAuthException catch (e) {
       setState(() {
         isLoading = false;
       });
-      alertErrorMesage(e.code);
+      // ignore: use_build_context_synchronously
+      alertErrorMesage("Server returned an error", context);
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      alertErrorMesage(e.toString());
-    }
-  }
+      String message = "";
+      if (e.toString().contains("Timeout")) {
+        message = "Unable to connect to server";
+      }
+      else {
+        message = e.toString();
+      }
 
-  void alertErrorMesage(String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, 'OK');
-              },
-              child: const Text('OK'),
-            ),
-          ]
-        );
-      },
-    );
+      // ignore: use_build_context_synchronously
+      alertErrorMesage(message, context);
+    }
   }
 
   @override
