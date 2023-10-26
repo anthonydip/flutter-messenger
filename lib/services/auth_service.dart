@@ -10,7 +10,7 @@ class AuthService {
   // Get access token for the user
   Future<String> getUserAccessToken(String email) async {
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/tokens/access'),
+      Uri.parse('${dotenv.env['API_URL']}/auth/tokens/access'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer ${dotenv.env['INTERNAL_TOKEN']}'
@@ -24,9 +24,11 @@ class AuthService {
     final status = body['status'];
 
     switch (status) {
+      case 'CREATED':
+        break;
       case 'BAD REQUEST':
         throw 'Invalid request';
-      case 'INTERNAL SERVER ERROR':
+      default:
         throw 'Internal server error';
     }
 
@@ -54,11 +56,13 @@ class AuthService {
     final status = body['status'];
 
     switch (status) {
+      case 'SUCCESS':
+        break;
       case 'BAD REQUEST':
         throw 'Invalid request';
       case 'UNAUTHORIZED':
         throw 'Incorrect password';
-      case 'INTERNAL SERVER ERROR':
+      default:
         throw 'Internal server error';
     }
 
