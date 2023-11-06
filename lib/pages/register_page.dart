@@ -30,7 +30,8 @@ class _RegisterPageState extends State<RegisterPage> {
       // Check if password is confirmed
       if (passwordController.text == confirmPasswordController.text) {
         await UserService().addUserToDatabase(emailController.text, passwordController.text, true);
-        await AuthService().getUserAccessToken(emailController.text);
+        String token = await AuthService().getUserAccessToken(emailController.text);
+        await UserService().getFriendsList(token);
 
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text, 
@@ -47,7 +48,6 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         isLoading = false;
       });
-      print(e);
       // ignore: use_build_context_synchronously
       alertErrorMesage("Server returned an error", context);
     } catch (e) {
