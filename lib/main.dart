@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:simple_messenger/pages/auth_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:simple_messenger/services/user_service.dart';
+import 'package:simple_messenger/singleton/user_data.dart';
 import 'firebase_options.dart';
 
-import 'components/friend.dart';
+import 'models/friend.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +15,14 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: ".env");
-  runApp(const MainApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserData()),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -21,15 +30,17 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MainAppState(),
-      child: MaterialApp(
-        title: 'Simple Messenger',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+    return ScaffoldMessenger(
+      child: ChangeNotifierProvider(
+        create: (context) => MainAppState(),
+        child: MaterialApp(
+          title: 'Simple Messenger',
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          ),
+          home: const AuthPage(),
         ),
-        home: const AuthPage(),
       ),
     );
   }
@@ -38,14 +49,32 @@ class MainApp extends StatelessWidget {
 class MainAppState extends ChangeNotifier {
   var friends = <Friend>[];
 
-  void addFriend(name) {
-    if (friends.contains(name)) {
-      // Friend already exists
-      // code..
-    } else {
-      friends.add(Friend(name));
-    }
+  // void addFriend(email) async {
+  //   if (friends.contains(email)) {
+  //     // Friend already exists
+  //     // code..
+  //   } else {
+  //     await UserService().addFriend(email, userData.token);
 
+  //     // friends.add(Friend(email));
+  //   }
+
+  //   notifyListeners();
+  // }
+}
+
+class FriendsModel extends ChangeNotifier {
+  List<Friend> _friends = [];
+
+  List<Friend> get friends => _friends;
+
+  void addFriend(Friend friend) {
+    _friends.add(friend);
+    notifyListeners();
+  }
+
+  void clearFriends() {
+    _friends.clear();
     notifyListeners();
   }
 }
