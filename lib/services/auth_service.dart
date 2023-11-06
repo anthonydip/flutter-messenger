@@ -109,19 +109,41 @@ class AuthService {
     );
 
     // Check if the user already exists in the database
-    final userExists = await UserService().getUserFromDatabase(gUser.email, false);
+    try {
+      await UserService().getUserFromDatabase(gUser.email, false);
 
-    // Add the user to the database if they do not already exist
-    if (!userExists) {
+      // Add the user to the database if they do not already exist
       await UserService().addUserToDatabase(gUser.email, "", false);
+
+      // Get user access token
+      await getUserAccessToken(gUser.email);
+
+      // Retrieve friends list
+      List<Friend> friends = await UserService().getFriendsList(userData.token);
+      userData.friends = friends;
+
+      // Sign in
+      final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      return userCred;
+    } catch (e) {
+      // Expected error if user's Google account already exists
+      if (e == "User already exists") {
+        // Get user access token
+        await getUserAccessToken(gUser.email);
+
+        // Retrieve friends list
+        List<Friend> friends = await UserService().getFriendsList(userData.token);
+        userData.friends = friends;
+
+        // Sign in
+        final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+
+        return userCred;
+      } else {
+        rethrow;
+      }
     }
-
-    // Get user access token
-    await getUserAccessToken(gUser.email);
-
-    // Sign in
-    final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
-
-    return userCred;
+    
   }
 }
