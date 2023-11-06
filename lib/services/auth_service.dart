@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:simple_messenger/models/friend.dart';
 import 'package:simple_messenger/singleton/user_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -37,6 +38,19 @@ class AuthService {
     return body['token'];
   }
 
+  // Sign out
+  signOut(String token) async {
+    await http.delete(
+      Uri.parse('${dotenv.env['API_URL']}/auth/tokens/access/$token'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${dotenv.env['INTERNAL_TOKEN']}'
+      },
+    ).timeout(const Duration(seconds: 5));
+
+    userData.clear();
+  }
+
   // Email and Password Sign In
   signInWithEmail(String email, String password) async {
     final response = await http.post(
@@ -62,11 +76,17 @@ class AuthService {
         throw 'Invalid request';
       case 'UNAUTHORIZED':
         throw 'Incorrect password';
+      case 'NOT FOUND':
+        throw 'User does not exist';
       default:
         throw 'Internal server error';
     }
 
     userData.token = body['token'];
+
+    // Retrieve friends list
+    List<Friend> friends = await UserService().getFriendsList(userData.token);
+    userData.friends = friends;
 
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email, 

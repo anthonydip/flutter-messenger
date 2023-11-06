@@ -2,7 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:simple_messenger/components/alert.dart';
+import 'package:simple_messenger/services/user_service.dart';
 import 'package:simple_messenger/singleton/user_data.dart';
+import 'package:simple_messenger/services/auth_service.dart';
+import 'package:simple_messenger/models/friend.dart';
+import 'package:simple_messenger/components/alertSnackbar.dart';
 
 import '../main.dart';
 import 'message_page.dart';
@@ -30,14 +35,58 @@ class _FriendsPageState extends State<FriendsPage> {
     super.dispose();
   }
 
+  void addFriend(String email, BuildContext context) async {
+    Friend friend = Friend(email);
+    final userData = context.read<UserData>();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    if (userData.friends.contains(friend)) {
+      // Friend already exists
+      alertSnackbarMessage("User already added", scaffoldMessenger);
+    } else {
+      try {
+        await UserService().addFriend(email, userData.token);
+
+        // Get the FriendsModel and add the friend
+        userData.addFriend(friend);
+
+        alertSnackbarMessage("User was added as friend", scaffoldMessenger);
+      } catch (e) {
+        String message = "";
+        if (e.toString().contains("Timeout")) {
+          message = "Unable to connect to server";
+        }
+        else {
+          message = e.toString();
+        }
+        
+        alertSnackbarMessage(message, scaffoldMessenger);
+      }
+    }
+  }
+
   void signOut() async {
-    await FirebaseAuth.instance.signOut();
+    try {
+      await AuthService().signOut(userData.token);
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      String message = "";
+      if (e.toString().contains("Timeout")) {
+        message = "Unable to connect to server";
+      }
+      else {
+        message = e.toString();
+      }
+
+      // ignore: use_build_context_synchronously
+      alertErrorMesage(message, context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MainAppState>();
-    var friends = appState.friends;
+    var userData = context.watch<UserData>();
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +107,7 @@ class _FriendsPageState extends State<FriendsPage> {
                   controller: controller,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Name',
+                    labelText: 'Email',
                   ),
                 ),
                 actions: <Widget>[
@@ -69,9 +118,7 @@ class _FriendsPageState extends State<FriendsPage> {
                   TextButton(
                     onPressed: () {
                       // Add friend to the friends list
-                      appState.addFriend(controller.text);
-
-                      Navigator.pop(context, 'Add');
+                      addFriend(controller.text, context);
                     },
                     child: const Text('Add'),
                   ),
@@ -82,28 +129,28 @@ class _FriendsPageState extends State<FriendsPage> {
         ],
         automaticallyImplyLeading: false,
       ),
-      body: Text("Logged in as: ${user.email}, token: ${userData.token}"),
-      // body: Padding(
-      //   padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-      //   child: ListView.builder(
-      //     itemCount: friends.length,
-      //     itemBuilder: (BuildContext context, int index) {
-      //       return ListTile(
-      //         title: Text(friends[index].name),
-      //         trailing: const Icon(Icons.message),
-      //         onTap: () {
-      //           // Navigate to the Message page, passing in the selected friend
-      //           Navigator.push(
-      //             context,
-      //             CupertinoPageRoute(
-      //               builder: (context) => MessagePage(friend: friends[index]),
-      //             ),
-      //           );
-      //         },
-      //       );
-      //     },
-      //   ),
-      // )
+      // body: Text("Logged in as: ${user.email}, token: ${userData.token}"),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+        child: ListView.builder(
+          itemCount: userData.friends.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(userData.friends[index].email),
+              trailing: const Icon(Icons.message),
+              onTap: () {
+                // Navigate to the Message page, passing in the selected friend
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => MessagePage(friend: userData.friends[index]),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      )
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/friend.dart';
+import '../models/friend.dart';
 
 class MessagePage extends StatelessWidget {
   // In the constructor, require a Friend
@@ -13,7 +13,7 @@ class MessagePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(friend.name),
+        title: Text(friend.email),
         shadowColor: Theme.of(context).colorScheme.shadow,
         leading: Builder(
           builder: (BuildContext context) {
