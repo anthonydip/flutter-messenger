@@ -47,6 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         isLoading = false;
       });
+      print(e);
       // ignore: use_build_context_synchronously
       alertErrorMesage("Server returned an error", context);
     } catch (e) {
