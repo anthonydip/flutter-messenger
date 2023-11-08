@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:simple_messenger/components/message_textfield.dart';
+import 'package:simple_messenger/services/connection_service.dart';
 import '../models/friend.dart';
 
 class MessagePage extends StatelessWidget {
@@ -10,6 +12,14 @@ class MessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textController = TextEditingController();
+    List<String> messages = [];
+
+    void onSend() {
+      if (textController.text.isNotEmpty) {
+        ConnectionService().sendMessage(textController.text);
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -27,6 +37,35 @@ class MessagePage extends StatelessWidget {
           }
         )
       ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            StreamBuilder(
+              stream: ConnectionService().channel?.stream,
+              builder: (context, snapshot) {  
+                if (snapshot.hasData) {
+                  messages.add(snapshot.data.toString());
+                }
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(messages[index])
+                      );
+                    },
+                  )
+                );
+              },
+            ),
+            MessageTextField(
+              controller: textController,
+              hintText: 'Message',
+              onIconTap: onSend,
+            ),
+          ]
+        )
+      )
     );
   }
 }

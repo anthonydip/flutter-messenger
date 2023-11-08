@@ -8,6 +8,8 @@ import 'package:simple_messenger/singleton/user_data.dart';
 import 'package:simple_messenger/services/auth_service.dart';
 import 'package:simple_messenger/models/friend.dart';
 import 'package:simple_messenger/components/alertSnackbar.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../main.dart';
 import 'message_page.dart';
@@ -27,6 +29,7 @@ class _FriendsPageState extends State<FriendsPage> {
 
   // Get the current user
   final user = FirebaseAuth.instance.currentUser!;
+
 
   @override
   void dispose() {

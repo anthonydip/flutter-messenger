@@ -6,6 +6,7 @@ import 'package:simple_messenger/singleton/user_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:simple_messenger/services/user_service.dart';
+import 'package:simple_messenger/services/connection_service.dart';
 
 class AuthService {
   // Get access token for the user
@@ -48,7 +49,11 @@ class AuthService {
       },
     ).timeout(const Duration(seconds: 5));
 
+    // Clear user data
     userData.clear();
+
+    // Close websocket connection
+    ConnectionService().close();
   }
 
   // Email and Password Sign In
@@ -88,6 +93,9 @@ class AuthService {
     List<Friend> friends = await UserService().getFriendsList(userData.token);
     userData.friends = friends;
 
+    // Establish websocket connection
+    await ConnectionService().connect(userData.token);
+
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email, 
       password: password
@@ -122,6 +130,9 @@ class AuthService {
       List<Friend> friends = await UserService().getFriendsList(userData.token);
       userData.friends = friends;
 
+      // Establish websocket connection
+      await ConnectionService().connect(userData.token);
+
       // Sign in
       final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -135,6 +146,9 @@ class AuthService {
         // Retrieve friends list
         List<Friend> friends = await UserService().getFriendsList(userData.token);
         userData.friends = friends;
+
+        // Establish websocket connection
+        await ConnectionService().connect(userData.token);
 
         // Sign in
         final UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);

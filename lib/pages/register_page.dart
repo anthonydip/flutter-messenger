@@ -6,6 +6,7 @@ import 'package:simple_messenger/components/login_button.dart';
 import 'package:simple_messenger/components/alert.dart';
 import 'package:simple_messenger/services/auth_service.dart';
 import 'package:simple_messenger/services/user_service.dart';
+import 'package:simple_messenger/services/connection_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onSignIn;
@@ -32,6 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
         await UserService().addUserToDatabase(emailController.text, passwordController.text, true);
         String token = await AuthService().getUserAccessToken(emailController.text);
         await UserService().getFriendsList(token);
+        await ConnectionService().connect(token);
 
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text, 
