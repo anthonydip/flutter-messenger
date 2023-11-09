@@ -5,12 +5,12 @@ import 'package:simple_messenger/models/friend.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
-  // Get user by email or ID
+  // Get user by email or ID, returns userID
   // If isID is true, then search by ID
   // If isID is false, then search by email
-  Future<bool> getUserFromDatabase(String id, bool isID) async {
+  Future<String> getUserFromDatabase(String id, bool isID) async {
     Map<String, String> queryParams;
-    bool userExists = true;
+    String userId = "";
 
     if (isID) {
       queryParams = {
@@ -36,17 +36,18 @@ class UserService {
 
     switch (status) {
       case 'SUCCESS':
+        userId = body['user']['id'];
         break;
       case 'BAD REQUEST':
         throw 'Invalid request';
       case 'NOT FOUND':
-        userExists = false;
+        userId = "";
         break;
       default:
         throw 'Internal server error';
     }
 
-    return userExists;
+    return userId;
   }
 
   // Add the user to the database
@@ -137,7 +138,7 @@ class UserService {
 
         List<Friend> friendsList = [];
         for (var friend in list) {
-          Friend tempFriend = Friend(friend['email']);
+          Friend tempFriend = Friend(friend['id'], friend['email']);
           friendsList.add(tempFriend);
         }
 
