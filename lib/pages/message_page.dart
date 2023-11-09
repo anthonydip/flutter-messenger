@@ -18,6 +18,7 @@ class MessagePage extends StatelessWidget {
     void onSend() {
       if (textController.text.isNotEmpty) {
         ConnectionService().sendMessage(textController.text);
+        textController.clear();
       }
     }
 
@@ -63,6 +64,7 @@ class MessagePage extends StatelessWidget {
               hintText: 'Message',
               onIconTap: onSend,
             ),
+            const SizedBox(height: 20),
           ]
         )
       )

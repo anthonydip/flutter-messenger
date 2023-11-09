@@ -1,11 +1,14 @@
 class Friend {
+  final String id;
   final String email;
 
-  const Friend(this.email);
+  const Friend(this.id, this.email);
 
   Friend.fromJson(Map<String, dynamic> json)
-    : email = json['email'];
+    : id = json['id'],
+      email = json['email'];
   Map<String, dynamic> toJson() => {
+    'id': id,
     'email': email,
   };
 
