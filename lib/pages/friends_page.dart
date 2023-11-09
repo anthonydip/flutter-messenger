@@ -39,23 +39,26 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 
   void addFriend(String email, BuildContext context) async {
-    Friend friend = Friend(email);
     final userData = context.read<UserData>();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-    if (userData.friends.contains(friend)) {
-      // Friend already exists
-      alertSnackbarMessage("User already added", scaffoldMessenger);
-    } else {
-      try {
+    try {
+      String friendId = await UserService().getUserFromDatabase(email, false);
+      Friend friend = Friend(friendId, email);
+
+      if (userData.friends.contains(friend)) {
+        // Friend already exists
+        alertSnackbarMessage("User already added", scaffoldMessenger);
+      } else {
         await UserService().addFriend(email, userData.token);
 
         // Get the FriendsModel and add the friend
-        userData.addFriend(friend);
+        userData.addFriend(Friend(friendId, email));
 
         alertSnackbarMessage("User was added as friend", scaffoldMessenger);
-      } catch (e) {
-        String message = "";
+      }
+    } catch (e) {
+      String message = "";
         if (e.toString().contains("Timeout")) {
           message = "Unable to connect to server";
         }
@@ -64,7 +67,6 @@ class _FriendsPageState extends State<FriendsPage> {
         }
         
         alertSnackbarMessage(message, scaffoldMessenger);
-      }
     }
   }
 
