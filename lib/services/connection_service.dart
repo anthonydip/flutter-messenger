@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:simple_messenger/singleton/user_data.dart';
 
 class ConnectionService {
   static ConnectionService? _instance;
   WebSocketChannel? channel;
+
+  final _streamController = StreamController<dynamic>.broadcast();
 
   // Private constructor to prevent direct instantiation
   ConnectionService._();
@@ -19,19 +24,27 @@ class ConnectionService {
       Uri.parse('${dotenv.env['WS_URL']}?token=$token'),
     );
 
-    // Listen to errors on the WebSocket
-    channel?.sink.done.then((_) {
-      print('WebSocket closed');
-    }).catchError((error) {
-      print('WebSocket error: $error');
-    });
+    channel?.stream.listen(
+      (data) {
+        _streamController.add(data);
+      },
+      onDone: () {
+        print("WebSocket closed");
+      },
+      onError: (error) {
+        print("WebSocket error: $error");
+      }
+    );
   }
 
-  void sendMessage(String message) {
+  Stream<dynamic> get stream => _streamController.stream;
+
+  void sendMessage(String message, String friendId) {
     if (channel != null) {
       try {
-        channel!.sink.add(message);
-        print('Message sent: $message');
+        print("user id ${userData.id}");
+        String msg = "/msg ${userData.id} $friendId $message";
+        channel!.sink.add(msg);
       } catch (e) {
         print('Error sending message: $e');
         // Handle the error if the message couldn't be sent.
@@ -44,6 +57,7 @@ class ConnectionService {
 
   void close() {
     channel?.sink.close();
+    _streamController.close();
     channel = null;
   }
 }

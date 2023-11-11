@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:simple_messenger/components/message_textfield.dart';
 import 'package:simple_messenger/services/connection_service.dart';
-import '../models/friend.dart';
+import 'package:simple_messenger/models/friend.dart';
+// import 'package:simple_messenger/models/message.dart';
 
 class MessagePage extends StatelessWidget {
   // In the constructor, require a Friend
@@ -17,7 +18,7 @@ class MessagePage extends StatelessWidget {
 
     void onSend() {
       if (textController.text.isNotEmpty) {
-        ConnectionService().sendMessage(textController.text);
+        ConnectionService().sendMessage(textController.text, friend.id);
         textController.clear();
       }
     }
@@ -42,10 +43,15 @@ class MessagePage extends StatelessWidget {
         child: Column(
           children: [
             StreamBuilder(
-              stream: ConnectionService().channel?.stream,
+              stream: ConnectionService().stream,
               builder: (context, snapshot) {  
+                // Check if user receives a message
                 if (snapshot.hasData) {
-                  messages.add(snapshot.data.toString());
+                  List<String> received = snapshot.data.toString().split(" ");
+                  // Check that the message received is from the current friend they are viewing
+                  if (received[0] == friend.id) {
+                    messages.add(received[2]);
+                  }
                 }
                 return Expanded(
                   child: ListView.builder(
