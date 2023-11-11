@@ -88,6 +88,11 @@ class AuthService {
     }
 
     userData.token = body['token'];
+    userData.email = email;
+
+    // Get the user id
+    String userId = await UserService().getUserFromDatabase(email, false);
+    userData.id = userId;
 
     // Retrieve friends list
     List<Friend> friends = await UserService().getFriendsList(userData.token);
@@ -116,12 +121,19 @@ class AuthService {
       idToken: gAuth.idToken,
     );
 
+    String userId = "";
+
     // Check if the user already exists in the database
     try {
-      await UserService().getUserFromDatabase(gUser.email, false);
-
       // Add the user to the database if they do not already exist
+      // Will throw "User already exists" if the user already exists
       await UserService().addUserToDatabase(gUser.email, "", false);
+
+      // Get the user id
+      userId = await UserService().getUserFromDatabase(gUser.email, false);
+
+      userData.email = gUser.email;
+      userData.id = userId;
 
       // Get user access token
       await getUserAccessToken(gUser.email);
@@ -142,6 +154,12 @@ class AuthService {
       if (e == "User already exists") {
         // Get user access token
         await getUserAccessToken(gUser.email);
+
+        // Get the user id
+        userId = await UserService().getUserFromDatabase(gUser.email, false);
+
+        userData.email = gUser.email;
+        userData.id = userId;
 
         // Retrieve friends list
         List<Friend> friends = await UserService().getFriendsList(userData.token);
