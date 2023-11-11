@@ -4,6 +4,7 @@ import 'package:simple_messenger/models/friend.dart';
 class UserData with ChangeNotifier {
   static final UserData _userData = UserData._internal();
 
+  String id = "";
   String email = "";
   String token = "";
   List<Friend> friends = [];
@@ -20,6 +21,7 @@ class UserData with ChangeNotifier {
   }
 
   void clear() {
+    id = "";
     email = "";
     token = "";
     friends.clear();
