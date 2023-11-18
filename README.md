@@ -1,16 +1,12 @@
-# simple_messenger
+# Simple Messenger
 
-A new Flutter project.
+A simple messaging application built with Flutter.
 
-## Getting Started
+## Introduction
 
-This project is a starting point for a Flutter application.
+Simple Messenger is a Flutter application designed to provide users with a very simplistic messaging application, allowing real-time communication with friends and family. Allowing for both email-password and Google sign-in authentication, users are also able to add any existing users as friends and start sending messages.
 
-A few resources to get you started if this is your first Flutter project:
+This Flutter app works in tandem with [Simple Messenger Go](https://github.com/anthonydip/flutter-messenger) running as the backend server.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Created as a learning project to learn and practice Flutter, along with implementing API calls and utilizing a cloud database.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
