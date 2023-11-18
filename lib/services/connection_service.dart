@@ -42,7 +42,6 @@ class ConnectionService {
   void sendMessage(String message, String friendId) {
     if (channel != null) {
       try {
-        print("user id ${userData.id}");
         String msg = "/msg ${userData.id} $friendId $message";
         channel!.sink.add(msg);
       } catch (e) {
