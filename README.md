@@ -10,3 +10,4 @@ This Flutter app works in tandem with [Simple Messenger Go](https://github.com/a
 
 Created as a learning project to learn and practice Flutter, along with implementing API calls and utilizing a cloud database.
 
+![login](https://github.com/anthonydip/flutter-messenger/assets/48003015/e808ffb2-17f8-403d-b374-593c280a3229) ![message](https://github.com/anthonydip/flutter-messenger/assets/48003015/79eb0926-bba9-4b8c-ab21-2f6a138cd735)
