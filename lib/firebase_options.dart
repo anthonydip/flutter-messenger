@@ -44,37 +44,37 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: '***REMOVED***',
-    appId: '***REMOVED***',
-    messagingSenderId: '***REMOVED***',
-    projectId: '***REMOVED***',
-    authDomain: '***REMOVED***.firebaseapp.com',
-    storageBucket: '***REMOVED***.appspot.com',
+    apiKey: 'AIzaSyDlMXee1YgD7io4qYwdVkAfikLiCjEWxTw',
+    appId: '1:447245725870:web:1b6228fdbbda4bcd55fd3f',
+    messagingSenderId: '447245725870',
+    projectId: 'simple-messenger-53bdb',
+    authDomain: 'simple-messenger-53bdb.firebaseapp.com',
+    storageBucket: 'simple-messenger-53bdb.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '***REMOVED***',
-    appId: '1:***REMOVED***:android:f7fdd2f8b97cc53c55fd3f',
-    messagingSenderId: '***REMOVED***',
-    projectId: '***REMOVED***',
-    storageBucket: '***REMOVED***.appspot.com',
+    apiKey: 'AIzaSyAyOpi3aZ3mYREDzMRxwqw0c7UO0l6epBU',
+    appId: '1:447245725870:android:f7fdd2f8b97cc53c55fd3f',
+    messagingSenderId: '447245725870',
+    projectId: 'simple-messenger-53bdb',
+    storageBucket: 'simple-messenger-53bdb.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: '***REMOVED***',
-    appId: '1:***REMOVED***:ios:8f37b9ead472c53f55fd3f',
-    messagingSenderId: '***REMOVED***',
-    projectId: '***REMOVED***',
-    storageBucket: '***REMOVED***.appspot.com',
-    iosBundleId: '***REMOVED***',
+    apiKey: 'AIzaSyCRmkLJJi_x6faefwTT0eOoDNc3RA3r8ck',
+    appId: '1:447245725870:ios:8f37b9ead472c53f55fd3f',
+    messagingSenderId: '447245725870',
+    projectId: 'simple-messenger-53bdb',
+    storageBucket: 'simple-messenger-53bdb.appspot.com',
+    iosBundleId: 'com.example.simpleMessenger',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: '***REMOVED***',
-    appId: '1:***REMOVED***:ios:d10d47af231f540355fd3f',
-    messagingSenderId: '***REMOVED***',
-    projectId: '***REMOVED***',
-    storageBucket: '***REMOVED***.appspot.com',
-    iosBundleId: '***REMOVED***.RunnerTests',
+    apiKey: 'AIzaSyCRmkLJJi_x6faefwTT0eOoDNc3RA3r8ck',
+    appId: '1:447245725870:ios:d10d47af231f540355fd3f',
+    messagingSenderId: '447245725870',
+    projectId: 'simple-messenger-53bdb',
+    storageBucket: 'simple-messenger-53bdb.appspot.com',
+    iosBundleId: 'com.example.simpleMessenger.RunnerTests',
   );
 }
