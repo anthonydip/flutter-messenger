@@ -61,8 +61,15 @@ class _MessagePageState extends State<MessagePage> {
                   List<String> received = snapshot.data.toString().split(" ");
                   // Check that the message received is from the current friend they are viewing
                   if (received[0] == widget.friend.id) {
+                    print(received);
+                    List<String> receivedMsgList = received.sublist(2, received.length - 2);
+                    print(receivedMsgList);
+
+                    String timestamp1 = received[received.length - 2];
+                    String timestamp2 = received[received.length - 1];
+
                     // Build the message
-                    Message msg = Message(widget.friend.email, received[2], received[3] + received[4]);
+                    Message msg = Message(widget.friend.email, receivedMsgList.join(" "), timestamp1 + timestamp2);
 
                     if (messages.isEmpty) {
                       messages.add(msg);
@@ -82,8 +89,9 @@ class _MessagePageState extends State<MessagePage> {
                       // User's message, else is friend's message
                       if (messages[index].user == widget.friend.email) {
                         return ListTile(
+                          contentPadding: const EdgeInsets.only(left: 30.0),
                           title: Text(
-                            "${messages[index].user}: ${messages[index].msg}",
+                            messages[index].msg,
                             style: TextStyle(
                               background: Paint()
                                 ..color = Colors.grey
@@ -97,9 +105,9 @@ class _MessagePageState extends State<MessagePage> {
                         );
                       } else {
                         return ListTile(
-                          contentPadding: EdgeInsets.only(right: 16.0),
+                          contentPadding: const EdgeInsets.only(right: 30.0),
                           title: Text(
-                            "${messages[index].user}: ${messages[index].msg}",
+                            messages[index].msg,
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               background: Paint()
