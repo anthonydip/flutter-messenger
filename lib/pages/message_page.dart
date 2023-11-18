@@ -61,9 +61,7 @@ class _MessagePageState extends State<MessagePage> {
                   List<String> received = snapshot.data.toString().split(" ");
                   // Check that the message received is from the current friend they are viewing
                   if (received[0] == widget.friend.id) {
-                    print(received);
                     List<String> receivedMsgList = received.sublist(2, received.length - 2);
-                    print(receivedMsgList);
 
                     String timestamp1 = received[received.length - 2];
                     String timestamp2 = received[received.length - 1];
